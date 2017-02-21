@@ -48,5 +48,25 @@ namespace pizza
             else
                 return false;
         }
+        
+        public static List<char[,]> makeIndexes(int Rows, int Columns, int MinOfEachIngrediands, int MaxCellSize)
+        {
+            List<char[,]> createdSlices = new List<char[,]>();
+            int InitialCellLength = MinOfEachIngrediands * 2;
+            int RowIndex = 1;
+            int ColumnIndex = InitialCellLength;
+            double LoopsApprxNumDouble = (Rows * Columns) / InitialCellLength;
+            int LoopsApprxNumInt = (int)Math.Ceiling(LoopsApprxNumDouble);
+            for (int i = RowIndex; i <= Rows; i++)
+            {
+                for (int j = ColumnIndex; j <= Columns; j++)
+                {
+                    if (i * j <= MaxCellSize)
+                        createdSlices.Add(new char[i, j]);
+                }
+                ColumnIndex = 1;
+            }
+            return createdSlices;
+        }
     }
 }
