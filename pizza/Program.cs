@@ -18,7 +18,7 @@ namespace pizza
 			foreach (ValidSlice tmp in ValidSlices)
 			{
 				Console.WriteLine ("Begining of slice number:" + counter);
-				Console.WriteLine ("Starting Row: "+ tmp.startingRow+" Starting Column: "+ tmp.startingColumn+" Ending Row: "+ tmp.endingRow+ "Ending Column: "+ tmp.endingColumn);
+				Console.WriteLine ("Starting Row: "+ tmp.startingRow+" Starting Column: "+ tmp.startingColumn+" Ending Row: "+ tmp.endingRow+ " Ending Column: "+ tmp.endingColumn);
 				for (int i = tmp.startingRow; i < tmp.slice.GetLength (0); i++) {
 					for (int j=tmp.startingColumn; j < tmp.slice.GetLength (1); j++) {
 						Console.Write (tmp.slice[i,j]);
@@ -149,8 +149,8 @@ namespace pizza
 							ValidSlice validSlice = new ValidSlice ();
 							validSlice.startingRow = i;
 							validSlice.startingColumn = j;
-							validSlice.endingRow = rowsOfSlice + i;
-							validSlice.endingColumn = columnsOfSlice + j;
+							validSlice.endingRow = rowsOfSlice-1 + i;
+							validSlice.endingColumn = columnsOfSlice-1 + j;
 							validSlice.slice = tmp;
 
 							validSlices.Add (validSlice);
