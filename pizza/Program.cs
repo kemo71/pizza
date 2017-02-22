@@ -17,7 +17,6 @@ namespace pizza
 			List<char[,]> possibleSlicesToCut = makeIndexes (3, 5, 1, 6);
 			List<ValidSlice> ValidSlices = createValidSlices (pizza, possibleSlicesToCut, 1);
             List<ValidSlice> FinalVS = new List<ValidSlice>();
-
             int counter = 0;
 
             var temp = ValidSlices.ToList();
@@ -25,7 +24,13 @@ namespace pizza
             temp = temp.OrderByDescending(a => (a.endingRow - a.startingRow + 1)).ThenByDescending(a => (a.endingColumn - a.startingColumn + 1)).ToList();
            
             FinalVS.AddRange(temp);
-            foreach (ValidSlice tmp in FinalVS)
+
+			Stack<int> emptyStack = new Stack<int> ();
+			List<ValidSlice> emptyPizza = new List<ValidSlice> ();
+
+			List<ValidSlice> soultionPizza = assemblePizza(FinalVS,ref emptyPizza,0,0,ref emptyStack,3,5);
+
+			foreach (ValidSlice tmp in soultionPizza)
 			{
 				Console.WriteLine ("Begining of slice number:" + counter);
                 //Console.WriteLine(tmp.slice.GetLength(0));
@@ -174,6 +179,75 @@ namespace pizza
 			return validSlices;
 		}
 
+		public static List<ValidSlice> assemblePizza(List<ValidSlice> finalSortedValidSlices,ref List<ValidSlice> pizza ,int startFromRow, int startFromColumn,ref Stack<int> indices,int pizzaRows,int pizzaColumns)
+		{
+			//base case
+
+			if (pizza.Count!=0 && (pizza[pizza.Count-1].endingRow+1)==pizzaRows && (pizza[pizza.Count-1].endingColumn+1) == pizzaColumns)
+				return pizza;
+			//recursive case
+			else
+			{
+				ValidSlice nextSlice = findNextSlice (finalSortedValidSlices, startFromRow, startFromColumn, ref indices);
+				if (nextSlice == null) 
+				{
+					ValidSlice tmp = pizza [pizza.Count - 1];
+					pizza.RemoveAt (pizza.Count - 1);
+					nextSlice = findNextSlice (finalSortedValidSlices, tmp.startingRow, tmp.startingColumn, ref indices);
+					// try adding a variable named mistakeRouteDepth and make pops as much as mistakeRouteDepth
+					indices.Pop();
+					indices.Pop();
+					pizza.Add (nextSlice);
+					if (nextSlice.endingColumn + 1 < pizzaColumns)
+					{
+						return assemblePizza (finalSortedValidSlices, ref pizza, nextSlice.startingRow, nextSlice.endingColumn + 1, ref indices, pizzaRows, pizzaColumns);
+					} 
+					else
+					{
+						return assemblePizza (finalSortedValidSlices, ref pizza, nextSlice.endingRow + 1, 0, ref indices, pizzaRows, pizzaColumns);
+					}
+
+
+				}
+				else 
+				{
+					pizza.Add (nextSlice);
+					if (nextSlice.endingColumn + 1 < pizzaColumns)
+					{
+						return assemblePizza (finalSortedValidSlices, ref pizza, nextSlice.startingRow, nextSlice.endingColumn + 1, ref indices, pizzaRows, pizzaColumns);
+					} 
+					else
+					{
+						return assemblePizza (finalSortedValidSlices, ref pizza, nextSlice.endingRow + 1, 0, ref indices, pizzaRows, pizzaColumns);
+					}
+				}
+			}
+			
+		}
+
+		public static ValidSlice findNextSlice(List<ValidSlice> finalSortedValidSlices,int startFromRow, int startFromColumn,ref Stack<int> indices)
+		{
+			int start;
+			if (indices.Count != 0)
+				start = indices.Peek ();
+			else
+				start = 0;
+			for (int i = start; i < finalSortedValidSlices.Count; i++)
+			{
+				if (finalSortedValidSlices [i].startingRow == startFromRow && finalSortedValidSlices [i].startingColumn == startFromColumn)
+				{
+					indices.Push (i + 1);
+					return finalSortedValidSlices [i];
+				} 
+			}
+			//no next found
+				return null;
+		}
+
+//		public static bool pizzaIsComplete()
+//		{
+//			return false;
+//		}
     }
 }
 
