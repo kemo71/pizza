@@ -8,17 +8,29 @@ namespace pizza
 {
     class Program
     {
+        public static int highestRow=0;
+        public static int highestColumn=0;
+
         static void Main(string[] args)
         {
 			char[,] pizza = new char[3,5]{ { 'T', 'T', 'T', 'T', 'T' }, { 'T', 'M', 'M', 'M', 'T' }, { 'T', 'T', 'T', 'T', 'T' } };
 			List<char[,]> possibleSlicesToCut = makeIndexes (3, 5, 1, 6);
 			List<ValidSlice> ValidSlices = createValidSlices (pizza, possibleSlicesToCut, 1);
+            List<ValidSlice> FinalVS = new List<ValidSlice>();
 
-			int counter = 0;
-			foreach (ValidSlice tmp in ValidSlices)
+            int counter = 0;
+
+            var temp = ValidSlices.ToList();
+
+            temp = temp.OrderByDescending(a => (a.endingRow - a.startingRow + 1)).ThenByDescending(a => (a.endingColumn - a.startingColumn + 1)).ToList();
+           
+            FinalVS.AddRange(temp);
+            foreach (ValidSlice tmp in FinalVS)
 			{
 				Console.WriteLine ("Begining of slice number:" + counter);
-				Console.WriteLine ("Starting Row: "+ tmp.startingRow+" Starting Column: "+ tmp.startingColumn+" Ending Row: "+ tmp.endingRow+ " Ending Column: "+ tmp.endingColumn);
+                //Console.WriteLine(tmp.slice.GetLength(0));
+                //Console.WriteLine(tmp.slice.GetLength(1));
+                Console.WriteLine ("Starting Row: "+ tmp.startingRow+" Starting Column: "+ tmp.startingColumn+" Ending Row: "+ tmp.endingRow+ " Ending Column: "+ tmp.endingColumn);
 				for (int i = tmp.startingRow; i < tmp.slice.GetLength (0); i++) {
 					for (int j=tmp.startingColumn; j < tmp.slice.GetLength (1); j++) {
 						Console.Write (tmp.slice[i,j]);
@@ -29,9 +41,10 @@ namespace pizza
 
 				Console.WriteLine ("Ending of slice number:" + counter);
 				Console.WriteLine ();
-
+                
 				counter++;
 			}
+            Console.ReadKey();
         }
 
 //        public bool isValidSlice(char[,] slice, int pizzaRows, int pizzaColumns, int minimumIngredientsPerSlice, int maximumCellsPerSlice)
@@ -160,7 +173,6 @@ namespace pizza
 			}
 			return validSlices;
 		}
-
 
     }
 }
